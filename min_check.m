@@ -5,12 +5,21 @@ scnsize = get(0,'ScreenSize');
 pos = [1, 21, 1920, 1060];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+pos1b = [1, 1920+1, 1920, 1080];
+pos2b = [1, 1920+221, 1920, 860];
+pos3b = [1, 1920+521, 1920, 560];
+pos1 = [1, 1, 1920, 1080];
+pos2 = [1, 221, 1920, 860];
+pos3 = [1, 521, 1920, 560];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Test.
 % func = x^2 + (10*y)^2;
 
 xsol = [0, 0];
 x0 = [10, 1];
-niter = 50;
+niter = 80;
 step0 = 1;
 mem = 5;
 
@@ -94,46 +103,58 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Plot.
-h = figure(1); clf(h); set(h,'OuterPosition',pos);
+h = figure(1); clf(h); set(h,'OuterPosition',pos1); set(gcf,'color','w');
 
-%--------------------------------------------------------------%
-subplot(2,2,1);
-p = plot( 1:niter, log(error_SD/error_SD(1)), '-ob' );
-set(gca,'linewidth',2,'fontsize',16);
-xlim([1 niter]); set(p,'linewidth',2);
-title('Log Error: Steepest Descent'); xlabel('Iteration','fontsize',12);
+for niteraux=2:niter
 
-subplot(2,2,2);
-p = plot( 1:niter, log(error_lBGFS/error_lBGFS(1)), '-og' );
-set(gca,'linewidth',2,'fontsize',16);
-xlim([1 niter]); set(p,'linewidth',2);
-title('Log Error: l-BFGS'); xlabel('Iteration','fontsize',12);
+    %--------------------------------------------------------------%
+    subplot(2,2,1);
+    p = plot( 1:niteraux, log(error_SD(1:niteraux)/error_SD(1)), '-ob' );
+    set(gca,'linewidth',2,'fontsize',20);
+    xlim([1 niteraux]); set(p,'linewidth',2);
+    title('Log Error: Steepest Descent'); xlabel('Iteration','fontsize',12);
 
-%--------------------------------------------------------------%
-subplot(2,2,3);
-xx = xsaved(1,:);
-yy = xsaved(2,:);
-p = plot( xx, yy, '-b' ); hold on;
-plot( 0, 0, 'o', 'MarkerFaceColor','r', 'MarkerEdgeColor','k', 'MarkerSize',5 );
-set(gca,'linewidth',2,'fontsize',16);
-xlim([1 niter]); set(p,'linewidth',2);
-title('Trajectory: Steepest Descent'); xlabel('x','fontsize',16); ylabel('y','fontsize',16);
-xlim([-x0(1) x0(1)]); ylim([-x0(2) x0(2)]);
+    subplot(2,2,2);
+    p = plot( 1:niteraux, log(error_lBGFS(1:niteraux)/error_lBGFS(1)), '-og' );
+    set(gca,'linewidth',2,'fontsize',20);
+    xlim([1 niteraux]); set(p,'linewidth',2);
+    title('Log Error: l-BFGS'); xlabel('Iteration','fontsize',12);
+    
+    %--------------------------------------------------------------%
+    subplot(2,2,3);
+    xx = xsaved(1,(1:niteraux));
+    yy = xsaved(2,(1:niteraux));
+    p = plot( xx, yy, '-b' ); hold on;
+    plot( 0, 0, 'o', 'MarkerFaceColor','r', 'MarkerEdgeColor','k', 'MarkerSize',5 );
+    set(gca,'linewidth',2,'fontsize',20);
+    xlim([1 niteraux]); set(p,'linewidth',2);
+    title('Trajectory: Steepest Descent'); xlabel('x','fontsize',16); ylabel('y','fontsize',16);
+    xlim([-x0(1) x0(1)]); ylim([-x0(2) x0(2)]);
+    
+    x = linspace(-10,10);
+    y = linspace(-1,1);
+    [X,Y] = meshgrid(x,y);
+    Z = X.^2 + (10*Y).^2;
+    p2 = contour(X,Y,Z,10,'--k'); hold on;
+    
+    subplot(2,2,4);
+    xx = xsaved2(1,(1:niteraux));
+    yy = xsaved2(2,(1:niteraux));
+    p = plot( xx, yy, '-b' ); hold on;
+    
+    x = linspace(-10,10);
+    y = linspace(-1,1);
+    [X,Y] = meshgrid(x,y);
+    Z = X.^2 + (10*Y).^2;
+    p2 = contour(X,Y,Z,10,'--k'); hold on;
+    
+    plot( 0, 0, 'o', 'MarkerFaceColor','r', 'MarkerEdgeColor','k', 'MarkerSize',5 );
+    set(gca,'linewidth',2,'fontsize',20);
+    xlim([1 niteraux]); set(p,'linewidth',2);
+    title('Trajectory: l-BFGS'); xlabel('x','fontsize',16); ylabel('y','fontsize',16);
+    xlim([-x0(1) x0(1)]); ylim([-x0(2) x0(2)]);
 
-subplot(2,2,4);
-xx = xsaved2(1,:);
-yy = xsaved2(2,:);
-p = plot( xx, yy, '-b' ); hold on;
-plot( 0, 0, 'o', 'MarkerFaceColor','r', 'MarkerEdgeColor','k', 'MarkerSize',5 );
-set(gca,'linewidth',2,'fontsize',16);
-xlim([1 niter]); set(p,'linewidth',2);
-title('Trajectory: l-BFGS'); xlabel('x','fontsize',16); ylabel('y','fontsize',16);
-xlim([-x0(1) x0(1)]); ylim([-x0(2) x0(2)]);
-
-
-
-
-
+end
 
 
 
